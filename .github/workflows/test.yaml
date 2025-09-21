@@ -1,14 +1,37 @@
-name: test
+# .github/workflows/list-s3.yml
+name: List S3 Buckets (OIDC AssumeRole)
 
 on:
   push:
-    branches:
-      - master
+    branches: [ master ]
   workflow_dispatch:
 
+# OIDC로 AWS 임시 자격증명을 받으려면 이 권한이 꼭 필요합니다.
+permissions:
+  id-token: write   # GitHub가 OIDC ID 토큰을 워크플로우에 발급할 수 있게 함
+  contents: read    # (선택) 리포 컨텐츠 읽기 권한
+
 jobs:
-  log-message:
+  listing-buckets:
+    name: Listing S3 Buckets
     runs-on: ubuntu-latest
+
     steps:
-      - name: Log message
-        run: echo "The workflow is working"
+      # (선택) 리포를 체크아웃해야 하는 작업이 있을 때만 필요합니다.
+      # - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials via OIDC (AssumeRole)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.IAM_ROLE }}   # 예: arn:aws:iam::123456789012:role/github-oidc-role
+          aws-region: ${{ secrets.AWS_REGION }}     # 예: us-east-1
+
+      - name: Who am I? (STS)
+        run: aws sts get-caller-identity
+
+      - name: List S3 buckets
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          echo "Listing S3 buckets in ${AWS_REGION}..."
+          aws s3 ls
