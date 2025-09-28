@@ -60,5 +60,5 @@ jobs:
         run: |
           aws s3 cp ${{ github.workspace }}/index.html s3://${{ secrets.BUCKET_NAME }}/index.html
           aws s3 cp ${{ github.workspace }}/images/ s3://${{ secrets.BUCKET_NAME }}/images --recursive
-          aws s3 ${{ github.workspace }}/styles/ s3://${{ secrets.BUCKET_NAME }}/styles --recursive
+          aws s3 cp ${{ github.workspace }}/styles/ s3://${{ secrets.BUCKET_NAME }}/styles --recursive
 
