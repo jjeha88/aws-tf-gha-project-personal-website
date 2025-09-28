@@ -55,10 +55,14 @@ jobs:
         env:
           TF_VAR_bucket_name: ${{ secrets.BUCKET_NAME }}
         run: terraform apply -input=false -auto-approve
-
+      - name: Debug paths
+        run: |
+          pwd
+          ls -la
+          ls -R
       - name: Uploading Files to S3 bucket
         run: |
-          aws s3 cp /Users/jaeha-mac/personal-website/index.html s3://${{ secrets.BUCKET_NAME }}/index.html
-          aws s3 cp /Users/jaeha-mac/personal-website/images/ s3://${{ secrets.BUCKET_NAME }}/images --recursive
-          aws s3 cp /Users/jaeha-mac/personal-website/styles/ s3://${{ secrets.BUCKET_NAME }}/styles --recursive
+          aws s3 cp ${{ github.workspace }}/index.html s3://${{ secrets.BUCKET_NAME }}/index.html
+          aws s3 cp ${{ github.workspace }}/images/ s3://${{ secrets.BUCKET_NAME }}/images --recursive
+          aws s3 ${{ github.workspace }}/styles/ s3://${{ secrets.BUCKET_NAME }}/styles --recursive
 
