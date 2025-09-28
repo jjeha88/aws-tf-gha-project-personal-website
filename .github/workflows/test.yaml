@@ -55,11 +55,7 @@ jobs:
         env:
           TF_VAR_bucket_name: ${{ secrets.BUCKET_NAME }}
         run: terraform apply -input=false -auto-approve
-      - name: Debug paths
-        run: |
-          pwd
-          ls -la
-          ls -R
+
       - name: Uploading Files to S3 bucket
         run: |
           aws s3 cp ${{ github.workspace }}/index.html s3://${{ secrets.BUCKET_NAME }}/index.html
